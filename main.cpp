@@ -1,10 +1,9 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
-#include <iostream>
 #include <math.h>
 
-#define FloatType double
+typedef GLdouble FloatType;
 
 struct Complex {
   FloatType real;
@@ -12,18 +11,18 @@ struct Complex {
 };
 
 const int DEFAULT_ITERS_OF_FORUMA_CALC = 100;
-const int MAX_COMPLEX_NUMBER_ABSOLUTE_VALUE = 16;
+const FloatType MAX_COMPLEX_NUMBER_ABSOLUTE_VALUE = 16;
 
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 800;
 
-const int RENDER_QUARTER_WIDTH = 200;
-const int RENDER_QUARTER_HEIGHT = 200;
+const int RENDER_QUARTER_WIDTH = 400;
+const int RENDER_QUARTER_HEIGHT = 400;
 
 const FloatType RENDER_STEP = 1;
 const FloatType ZOOM_STEP = 0.1;
 
-const int DEFAULT_ZOOM = 4;
+const FloatType DEFAULT_ZOOM = 5;
 
 void init();
 void onMouseStateChangeListener(int button, int state, int x, int y);
@@ -108,6 +107,7 @@ void onMouseStateChangeListener(int button, int state, int x, int y) {
   if (button == 3 || button == 4) {
     doRender = true;
     scaleFactor = 1 / exp(zoom);
+    updateItersOfFormulaCalc();
   }
 
   prevMouseYPos = y;
@@ -178,19 +178,19 @@ void renderAxes() {
   glEnd();
 }
 
+Complex z, c, tempZ, tempC;
+
 void renderFrame() {
-  updateItersOfFormulaCalc();
-
-  //std::cout << "\n" << itersOfFormulaCalc;
-
   glBegin(GL_POINTS);
 
-  for (FloatType x = -RENDER_QUARTER_WIDTH; x < RENDER_QUARTER_WIDTH;
+  for (int x = -RENDER_QUARTER_WIDTH; x < RENDER_QUARTER_WIDTH;
        x += RENDER_STEP) {
-    for (FloatType y = -RENDER_QUARTER_HEIGHT; y < RENDER_QUARTER_HEIGHT;
+    for (int y = -RENDER_QUARTER_HEIGHT; y < RENDER_QUARTER_HEIGHT;
          y += RENDER_STEP) {
+
       int degree = calcProximityDegreeToCenter(x * scaleFactor + xShiftFactor,
                                                y * scaleFactor + yShiftFactor);
+
       renderPoint(degree, x, y);
     }
   }
@@ -199,7 +199,7 @@ void renderFrame() {
 }
 
 void updateItersOfFormulaCalc() {
-  int value = zoom * 10;
+  int value = round(zoom) * 10;
   itersOfFormulaCalc = value < DEFAULT_ITERS_OF_FORUMA_CALC
                            ? DEFAULT_ITERS_OF_FORUMA_CALC
                            : value;
@@ -249,10 +249,10 @@ void renderPoint(int n, int x, int y) {
     return;
   }
 
-  FloatType a = 35 * n % 255;
-  FloatType b = 30 * n % 255;
-  FloatType c = 25 * n % 255;
+  GLfloat r = (35 * n) % 255;
+  GLfloat g = (30 * n) % 255;
+  GLfloat b = (25 * n) % 255;
 
-  glColor3d(a / 255.0, b / 255.0, c / 255.0);
+  glColor3f(r / 255., g / 255., b / 255.);
   glVertex2d(x, y);
 }
