@@ -35,8 +35,8 @@ void renderFrame();
 void updateItersOfFormulaCalc();
 int calcProximityDegreeToCenter(FloatType x, FloatType y);
 bool isAllowableComplexValue(Complex number);
-void calcIterableFormula(Complex &z, Complex &c);
-void renderPoint(int n, int x, int y);
+void calcIterableFormulas(Complex &z, Complex &c);
+void renderPoint(int degree, int x, int y);
 
 FloatType zoom = DEFAULT_ZOOM;
 
@@ -216,7 +216,7 @@ int calcProximityDegreeToCenter(FloatType x, FloatType y) {
   int n = 0;
 
   for (; isAllowableComplexValue(z) && n < itersOfFormulaCalc; n++) {
-    calcIterableFormula(z, c);
+    calcIterableFormulas(z, c);
   }
 
   return n;
@@ -231,10 +231,12 @@ bool isAllowableComplexValue(Complex number) {
 }
 
 /*
- * Iterable formula for calculating fractal:
- * f(z) = z^2 + c
+ * Iterable formulas for calculating fractal:
+ *
+ * z = z^2 + c
+ * c = c/2 + z
  */
-void calcIterableFormula(Complex &z, Complex &c) {
+void calcIterableFormulas(Complex &z, Complex &c) {
   Complex tempZ = z;
   Complex tempC = c;
 
@@ -244,14 +246,14 @@ void calcIterableFormula(Complex &z, Complex &c) {
   c.imag = tempC.imag / 2 + z.imag;
 }
 
-void renderPoint(int n, int x, int y) {
-  if (n >= itersOfFormulaCalc) {
+void renderPoint(int degree, int x, int y) {
+  if (degree >= itersOfFormulaCalc) {
     return;
   }
 
-  GLfloat r = (35 * n) % 255;
-  GLfloat g = (30 * n) % 255;
-  GLfloat b = (25 * n) % 255;
+  GLfloat r = (35 * degree) % 255;
+  GLfloat g = (30 * degree) % 255;
+  GLfloat b = (25 * degree) % 255;
 
   glColor3f(r / 255., g / 255., b / 255.);
   glVertex2d(x, y);
